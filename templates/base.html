@@ -1,0 +1,33 @@
+{# base.html #}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+     <!-- Bootstrap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+    <title>ToDo App</title>
+</head>
+<body>
+    <div class="container">
+        <!-- show flashed messages -->
+        {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
+        <!-- show errors -->
+        {% if error %}
+            <div class="error"><strong>Error:</strong> {{ error }}</div>
+        {% endif %}
+        <!-- inheritance -->
+        {% block content %}
+        {% endblock %}
+    </div>
+    <!-- Bootstrap JS files -->
+    <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap-confirmation.min.js') }}"></script>
+</body>
+</html>

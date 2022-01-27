@@ -1,0 +1,35 @@
+{# signup.html #}
+
+{%  extends "base.html" %}
+{% block content %}
+    <h1>Create your account</h1>
+    <br>
+    <form action="{{ url_for("signup") }}" method="POST">
+    {# Add CSRF protection #}
+    {{ form.csrf_token }}
+    <div class="form-group">
+        {{ form.username.label }}
+        {{ form.username (class="form-control") }}
+    </div>
+    <br>
+    <div class="form-group">
+        {{ form.email.label }}
+        {{ form.email (class="form-control") }}
+    </div>
+    <br>
+    <div class="form-group">
+        {{ form.password.label }}
+        {{ form.password (class="form-control") }}
+    </div>
+    <br>
+    <div class="form-group">
+        {{ form.confirm_password.label }}
+        {{ form.confirm_password (class="form-control") }}
+    </div>
+    <br>
+    <div>
+        <button type="submit" class="btn btn-default">Submit and Create Account</button>
+    </div>
+    </form>
+
+{% endblock %}

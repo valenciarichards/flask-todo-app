@@ -2,6 +2,7 @@
 
 * Flask
 * Flask-SQLAlchemy
+* N.B. App requires Python versions 3.6 - 3.9 due to dependencies
 
 ## Install
 

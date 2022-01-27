@@ -1,0 +1,99 @@
+{# tasks.html #}
+
+{%  extends "base.html" %}
+{% block content %}
+
+
+<h1>My Tasks</h1>
+<<a href="{{ url_for('logout') }}">Logout</a>
+
+{# TODO fix this #}
+
+<div class="add-task">
+  <h3>Add a new task:</h3>
+  <form action="{{ url_for('add_task') }}" method="POST" class="form-inline">
+    {# Add CSRF protection #}
+    {{ form.csrf_token }}
+    <div class="form-group">
+      {{ form.name.label }}
+      {{ form.name (class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.due_date.label }}
+      {{ form.due_date (class="form-control") }}
+    </div>
+    <div class="form-group">
+      {{ form.priority.label }}
+      {{ form.priority (class="form-control") }}
+    </div>
+    <div class="form-group">
+      <button type="submit" class="btn btn-default">Submit</button>
+    </div>
+  </form>
+</div>
+{# TODO fix above #}
+
+<br>
+
+<div class="entries">
+  <br>
+  <br>
+  <h2>Incomplete tasks:</h2>
+    <div class="datagrid">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Task Name</th>
+          <th scope="col">Due Date</th>
+          <th scope="col">Priority</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+        <tbody>
+          {% for task in incomplete_tasks %}
+            <tr>
+              <td>{{ task.name }}</td>
+              <td>{{ task.due_date }}</td>
+              <td>{{ task.priority }}</td>
+              <td>
+                <a href="{{ url_for('mark_task_as_complete', task_id=task.id) }}">Mark as Complete</a>
+                <a href="{{ url_for('edit_task', task_id=task.id) }}">Edit</a>
+                <a href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+<br>
+<br>
+<div class="entries">
+  <h2>Complete tasks:</h2>
+  <div class="datagrid">
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Task Name</th>
+          <th scope="col">Due Date</th>
+          <th scope="col">Priority</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+        <tbody>
+          {% for task in complete_tasks %}
+            <tr>
+              <td>{{ task.name }}</td>
+              <td>{{ task.due_date }}</td>
+              <td>{{ task.priority }}</td>
+              <td>
+                 <a href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

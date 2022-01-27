@@ -1,3 +1,5 @@
+# models.py
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -10,26 +12,43 @@ db = SQLAlchemy(app)
 
 class User(db.Model):
     """User class to store users in the database"""
+
+    __tablename__ = "users"
+
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(30), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(60))
-    tasks = db.relationship("Task", backref="user", lazy=True)
+    username = db.Column(db.String, unique=True, nullable=False)
+    email = db.Column(db.String, unique=True, nullable=False)
+    password = db.Column(db.String, nullable=False)
+    # Setup one-to-many relationship
+    tasks = db.relationship("Task", backref="user")
+
+    def __init__(self, username, email, password):
+        self.username = username
+        self. email = email
+        self.password = password
 
     def __repr__(self):
-        return f"User: {self.username}, Email: {self.email}"
+        return "<User: %r>" % self.username
 
 
 class Task(db.Model):
     """To-Do class to store tasks in the database"""
+
+    __tablename__ = "tasks"
+
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), unique=False, nullable=False)
-    due_date = db.Column(db.DateTime, unique=False, nullable=False)
-    # Priority will default to 4 (lowest) if none is entered.
-    priority = db.Column(db.Integer, unique=False, default=4)
-    # Mark tasks as incomplete by default.
-    is_completed = db.Column(db.Boolean, unique=False, default=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    name = db.Column(db.String, nullable=False)
+    due_date = db.Column(db.Date, nullable=False)
+    priority = db.Column(db.Integer, nullable=False)
+    is_complete = db.Column(db.Boolean, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
+    def __init__(self, name, due_date, priority, is_complete, user_id):
+        self.name = name
+        self.due_date = due_date
+        self.priority = priority
+        self.is_complete = is_complete
+        self.user_id = user_id
 
     def __repr__(self):
-        return f"Task: {self.name}, Due: {self.due_date}"
+        return "<Task: %r>" % self.name
