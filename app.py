@@ -4,6 +4,7 @@ from flask import Flask, redirect, url_for, render_template, request, session, f
 from forms import SignupUserForm, LoginUserForm, AddOrUpdateTaskForm
 from models import db, User, Task
 from functools import wraps
+from datetime import datetime
 
 # Flask
 app = Flask(__name__)
@@ -58,7 +59,7 @@ def login():
     if request.method == "POST":
         # Validate form data.
         if form.validate():
-            # TODO see if you can remove request.form
+            # TODO change to db.session
             user = User.query.filter_by(username=form.username.data).first()
             # If the user is in the database and the password is correct, log the user in and redirect to tasks page.
             if user is not None and user.password == form.password.data:
@@ -116,9 +117,9 @@ def tasks():
     # TODO redirect tasks/task_id to edit/task_id (look into optional routing?)
     form = AddOrUpdateTaskForm(request.form)
     incomplete_tasks = db.session.query(Task).filter_by(user_id=session["user_id"], is_complete=False)\
-        .order_by(Task.due_date.asc(), Task.priority.asc())
+        .order_by(Task.created_date)
     complete_tasks = db.session.query(Task).filter_by(user_id=session["user_id"], is_complete=True)\
-        .order_by(Task.due_date.asc(), Task.priority.asc())
+        .order_by(Task.created_date)
     return render_template("tasks.html", form=form, incomplete_tasks=incomplete_tasks, complete_tasks=complete_tasks)
 
 
@@ -136,6 +137,7 @@ def add_task():
                 due_date=form.due_date.data,
                 priority=form.priority.data,
                 is_complete=False,
+                created_date=datetime.now(),
                 user_id=session["user_id"]
             )
             # Add the Task to the database and redirect to the tasks page.

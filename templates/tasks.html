@@ -7,7 +7,7 @@
 <h1>My Tasks</h1>
 <<a href="{{ url_for('logout') }}">Logout</a>
 
-{# TODO fix this #}
+{# Add task #}
 
 <div class="add-task">
   <h3>Add a new task:</h3>
@@ -31,9 +31,10 @@
     </div>
   </form>
 </div>
-{# TODO fix above #}
 
 <br>
+
+{# Show incomplete tasks #}
 
 <div class="entries">
   <br>
@@ -44,6 +45,7 @@
       <thead>
         <tr>
           <th scope="col">Task Name</th>
+          <th scope="col">Date Created</th>
           <th scope="col">Due Date</th>
           <th scope="col">Priority</th>
           <th scope="col">Actions</th>
@@ -53,6 +55,7 @@
           {% for task in incomplete_tasks %}
             <tr>
               <td>{{ task.name }}</td>
+              <td>{{ task.created_date }}</td>
               <td>{{ task.due_date }}</td>
               <td>{{ task.priority }}</td>
               <td>
@@ -67,6 +70,9 @@
     </div>
 </div>
 <br>
+
+{# Show complete tasks #}
+
 <br>
 <div class="entries">
   <h2>Complete tasks:</h2>
@@ -75,6 +81,7 @@
       <thead>
         <tr>
           <th scope="col">Task Name</th>
+          <th scope="col">Date Created</th>
           <th scope="col">Due Date</th>
           <th scope="col">Priority</th>
           <th scope="col">Actions</th>
@@ -84,6 +91,7 @@
           {% for task in complete_tasks %}
             <tr>
               <td>{{ task.name }}</td>
+              <td>{{ task.created_date }}</td>
               <td>{{ task.due_date }}</td>
               <td>{{ task.priority }}</td>
               <td>
