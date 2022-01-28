@@ -41,15 +41,15 @@ class Task(db.Model):
     due_date = db.Column(db.Date, nullable=False)
     priority = db.Column(db.Integer, nullable=False)
     is_complete = db.Column(db.Boolean, nullable=False)
-    created_date = db.Column(db.Date, nullable=False)
+    created_datetime = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
-    def __init__(self, name, due_date, priority, is_complete, created_date, user_id):
+    def __init__(self, name, due_date, priority, is_complete, created_datetime, user_id):
         self.name = name
         self.due_date = due_date
         self.priority = priority
         self.is_complete = is_complete
-        self.created_date = created_date
+        self.created_datetime = created_datetime
         self.user_id = user_id
 
     def __repr__(self):

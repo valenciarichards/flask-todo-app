@@ -110,16 +110,30 @@ def signup():
 
 
 @app.route("/tasks/")
+@app.route("/tasks/<sort_param>")
 @login_required
-def tasks():
-    """View all tasks and display a form to add tasks."""
+def tasks(sort_param=None):
+    """View all tasks by selected sort order and display a form to add tasks."""
     # TODO add ability to sort by priority
     # TODO redirect tasks/task_id to edit/task_id (look into optional routing?)
     form = AddOrUpdateTaskForm(request.form)
-    incomplete_tasks = db.session.query(Task).filter_by(user_id=session["user_id"], is_complete=False)\
-        .order_by(Task.created_date)
-    complete_tasks = db.session.query(Task).filter_by(user_id=session["user_id"], is_complete=True)\
-        .order_by(Task.created_date)
+    # If optional sort parameter is passed, sort depending on value.
+    # Sort by newest first.
+    if sort_param == "by_newest_first":
+        items = db.session.query(Task).filter_by(user_id=session["user_id"]).order_by(Task.created_datetime.desc())
+    # Sort by earliest due date.
+    elif sort_param == "by_earliest_due_date":
+        items = db.session.query(Task).filter_by(user_id=session["user_id"]).order_by(Task.due_date.asc())
+    # Sort by highest priority.
+    elif sort_param == "by_highest_priority":
+        items = db.session.query(Task).filter_by(user_id=session["user_id"]).order_by(Task.priority.asc())
+    # Sort by oldest first (default)
+    else:
+        items = db.session.query(Task).filter_by(user_id=session["user_id"]).order_by(Task.created_datetime.asc())
+
+    incomplete_tasks = items.filter_by(is_complete=False)
+    complete_tasks = items.filter_by(is_complete=True)
+
     return render_template("tasks.html", form=form, incomplete_tasks=incomplete_tasks, complete_tasks=complete_tasks)
 
 
@@ -137,7 +151,7 @@ def add_task():
                 due_date=form.due_date.data,
                 priority=form.priority.data,
                 is_complete=False,
-                created_date=datetime.now(),
+                created_datetime=datetime.now(),
                 user_id=session["user_id"]
             )
             # Add the Task to the database and redirect to the tasks page.

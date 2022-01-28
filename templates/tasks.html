@@ -33,6 +33,23 @@
 </div>
 
 <br>
+<br>
+
+{# Dropdown Menu for sorting tasks #}
+
+<div class="dropdown">
+  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Sort tasks by
+     <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <li><a class="dropdown-item" href="{{ url_for('tasks') }}">Date Created: Oldest First (default)</a></li>
+    <li><a class="dropdown-item" href="{{ url_for('tasks', sort_param='by_newest_first') }}">Date Created: Newest First</a></li>
+    <li><a class="dropdown-item" href="{{ url_for('tasks', sort_param='by_earliest_due_date') }}">Earliest Due Date</a></li>
+    <li><a class="dropdown-item" href="{{ url_for('tasks', sort_param='by_highest_priority') }}">Highest Priority</a></li>
+  </ul>
+</div>
+
 
 {# Show incomplete tasks #}
 
@@ -55,8 +72,8 @@
           {% for task in incomplete_tasks %}
             <tr>
               <td>{{ task.name }}</td>
-              <td>{{ task.created_date }}</td>
-              <td>{{ task.due_date }}</td>
+              <td>{{ task.created_datetime.strftime("%m/%d/%Y, %-I:%M %p") }}</td>
+              <td>{{ task.due_date.strftime("%m/%d/%Y") }}</td>
               <td>{{ task.priority }}</td>
               <td>
                 <a href="{{ url_for('mark_task_as_complete', task_id=task.id) }}">Mark as Complete</a>
@@ -91,8 +108,8 @@
           {% for task in complete_tasks %}
             <tr>
               <td>{{ task.name }}</td>
-              <td>{{ task.created_date }}</td>
-              <td>{{ task.due_date }}</td>
+              <td>{{ task.created_datetime.strftime("%m/%d/%Y, %-I:%M %p") }}</td>
+              <td>{{ task.due_date.strftime("%m/%d/%Y") }}</td>
               <td>{{ task.priority }}</td>
               <td>
                  <a href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a>
