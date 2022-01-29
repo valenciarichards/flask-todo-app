@@ -61,12 +61,13 @@ def login():
         # Validate form data.
         if form.validate():
             # TODO change to db.session
-            user = User.query.filter_by(username=form.username.data).first()
+            user = db.session.query(User).filter_by(username=form.username.data).first()
             # If the user is in the database and the password is correct, log the user in and redirect to tasks page.
             if user is not None and user.password == form.password.data:
                 session["logged_in"] = True
                 session["user_id"] = user.id
-                flash("Login successful.")
+                session["username"] = user.username
+                flash("Welcome back, {}!".format(user.username))
                 return redirect(url_for("tasks"))
             # Otherwise, show an error.
             else:
