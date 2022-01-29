@@ -38,15 +38,15 @@
 {# Dropdown Menu for sorting tasks #}
 
 <div class="dropdown">
-  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Sort tasks by
      <span class="caret"></span>
   </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <li><a class="dropdown-item" href="{{ url_for('tasks') }}">Date Created: Oldest First (default)</a></li>
-    <li><a class="dropdown-item" href="{{ url_for('tasks', sort_param='by_newest_first') }}">Date Created: Newest First</a></li>
-    <li><a class="dropdown-item" href="{{ url_for('tasks', sort_param='by_earliest_due_date') }}">Earliest Due Date</a></li>
-    <li><a class="dropdown-item" href="{{ url_for('tasks', sort_param='by_highest_priority') }}">Highest Priority</a></li>
+  <ul class="dropdown-menu form-group" aria-labelledby="dropdownMenuButton">
+    <li><a class="dropdown-item form-control" href="{{ url_for('tasks') }}">Date Created: Oldest First (default)</a></li>
+    <li><a class="dropdown-item form-control" href="{{ url_for('tasks', sort_param='by_newest_first') }}">Date Created: Newest First</a></li>
+    <li><a class="dropdown-item form-control" href="{{ url_for('tasks', sort_param='by_earliest_due_date') }}">Earliest Due Date</a></li>
+    <li><a class="dropdown-item form-control" href="{{ url_for('tasks', sort_param='by_highest_priority') }}">Highest Priority</a></li>
   </ul>
 </div>
 

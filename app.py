@@ -5,6 +5,7 @@ from forms import SignupUserForm, LoginUserForm, AddOrUpdateTaskForm
 from models import db, User, Task
 from functools import wraps
 from datetime import datetime
+from sqlalchemy.exc import IntegrityError
 
 # Flask
 app = Flask(__name__)
@@ -100,12 +101,17 @@ def signup():
                 password=form.password.data,
             )
             # Add the new User to the database and redirect to the login page.
-            db.session.add(new_user)
-            db.session.commit()
-            flash("Account successfully created. Please sign in.")
-            return redirect(url_for("login"))
+            # Handle database errors.
+            try:
+                db.session.add(new_user)
+                db.session.commit()
+                flash("Account successfully created. Please sign in.")
+                return redirect(url_for("login"))
+            except IntegrityError:
+                error = "That username and/or email address already exists. Please login."
+                return render_template("login.html", form=form, error=error)
         else:
-            flash("Account not created. Please try again")
+            error = "Account not created. Please try again."
     return render_template("signup.html", form=form, error=error)
 
 
@@ -114,7 +120,6 @@ def signup():
 @login_required
 def tasks(sort_param=None):
     """View all tasks by selected sort order and display a form to add tasks."""
-    # TODO add ability to sort by priority
     # TODO redirect tasks/task_id to edit/task_id (look into optional routing?)
     form = AddOrUpdateTaskForm(request.form)
     # If optional sort parameter is passed, sort depending on value.
