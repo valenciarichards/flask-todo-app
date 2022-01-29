@@ -10,7 +10,8 @@ class SignupUserForm(Form):
     username = StringField("Username", validators=[DataRequired(), Length(min=6, max=25)])
     email = StringField("Email", validators=[DataRequired(), Email(), Length(min=6, max=40)])
     password = PasswordField("Password", validators=[DataRequired(), Length(min=6, max=40)])
-    confirm_password = PasswordField("Confirm Password", validators=[DataRequired(), EqualTo("password")])
+    confirm_password = PasswordField("Confirm Password",
+                                     validators=[DataRequired(), EqualTo("password", message="Passwords must match.")])
 
 
 class LoginUserForm(Form):
