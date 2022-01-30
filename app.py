@@ -92,6 +92,7 @@ def logout():
     """Log the user out of the app."""
     session.pop("logged_in", None)
     session.pop("user_id", None)
+    session.pop("username", None)
     flash("You have successfully logged out.")
     return redirect(url_for("login"))
 
