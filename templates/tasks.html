@@ -1,30 +1,37 @@
 {# tasks.html #}
 
 {%  extends "base.html" %}
+
+{% block navbar %}
+  <li><a href="{{ url_for('logout') }}">Logout</a></li>
+{% endblock navbar %}
+
 {% block content %}
 
-
-<h1>My Tasks</h1>
-<<a href="{{ url_for('logout') }}">Logout</a>
+<h1 class="text-center">My Tasks</h1>
 
 {# Add task #}
 
 <div class="add-task">
-  <h3>Add a new task:</h3>
+  <h2>Add new task:</h2>
+    <br>
   <form action="{{ url_for('add_task') }}" method="POST" class="form-inline">
     {# Add CSRF protection #}
     {{ form.csrf_token }}
     <div class="form-group">
       {{ form.name.label }}
       {{ form.name (class="form-control") }}
+        &nbsp; &nbsp;
     </div>
     <div class="form-group">
       {{ form.due_date.label }}
       {{ form.due_date (class="form-control") }}
+        &nbsp; &nbsp;
     </div>
     <div class="form-group">
       {{ form.priority.label }}
       {{ form.priority (class="form-control") }}
+        &nbsp; &nbsp;
     </div>
     <div class="form-group">
       <button type="submit" class="btn btn-default">Submit</button>
@@ -35,12 +42,12 @@
 <br>
 <br>
 
+
 {# Dropdown Menu for sorting tasks #}
 
-<div class="dropdown">
+<div class="dropdown btn-group">
   <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Sort tasks by
-     <span class="caret"></span>
+    Sort by <span class="caret"></span>
   </button>
   <ul class="dropdown-menu form-group" aria-labelledby="dropdownMenuButton">
     <li><a class="dropdown-item form-control" href="{{ url_for('tasks') }}">Date Created: Oldest First (default)</a></li>
@@ -49,35 +56,34 @@
     <li><a class="dropdown-item form-control" href="{{ url_for('tasks', sort_param='by_highest_priority') }}">Highest Priority</a></li>
   </ul>
 </div>
-
+<br>
 
 {# Show incomplete tasks #}
 
 <div class="entries">
-  <br>
-  <br>
   <h2>Incomplete tasks:</h2>
+    <br>
     <div class="datagrid">
-    <table class="table">
+    <table class="table table-striped">
       <thead>
         <tr>
-          <th scope="col">Task Name</th>
-          <th scope="col">Date Created</th>
-          <th scope="col">Due Date</th>
-          <th scope="col">Priority</th>
-          <th scope="col">Actions</th>
+          <th scope="col" class="col-md-4">Task Name</th>
+          <th scope="col" class="col-md-2">Date Created</th>
+          <th scope="col" class="col-md-2">Due Date</th>
+          <th scope="col" class="col-md-1">Priority</th>
+          <th scope="col" class="col-md-3">Actions</th>
         </tr>
       </thead>
         <tbody>
           {% for task in incomplete_tasks %}
             <tr>
               <td>{{ task.name }}</td>
-              <td>{{ task.created_datetime.strftime("%m/%d/%Y, %-I:%M %p") }}</td>
+              <td>{{ task.created_datetime.strftime("%m/%d/%Y at %-I:%M %p") }}</td>
               <td>{{ task.due_date.strftime("%m/%d/%Y") }}</td>
               <td>{{ task.priority }}</td>
               <td>
-                <a href="{{ url_for('mark_task_as_complete', task_id=task.id) }}">Mark as Complete</a>
-                <a href="{{ url_for('edit_task', task_id=task.id) }}">Edit</a>
+                <a href="{{ url_for('mark_task_as_complete', task_id=task.id) }}">Mark Complete</a> &nbsp;
+                <a href="{{ url_for('edit_task', task_id=task.id) }}">Edit</a> &nbsp;
                 <a href="{{ url_for('delete_task', task_id=task.id) }}">Delete</a>
               </td>
             </tr>
@@ -90,25 +96,26 @@
 
 {# Show complete tasks #}
 
-<br>
-<div class="entries">
+
+<div>
   <h2>Complete tasks:</h2>
+<br>
   <div class="datagrid">
-    <table class="table">
+    <table class="table table-striped">
       <thead>
         <tr>
-          <th scope="col">Task Name</th>
-          <th scope="col">Date Created</th>
-          <th scope="col">Due Date</th>
-          <th scope="col">Priority</th>
-          <th scope="col">Actions</th>
+          <th scope="col" class="col-md-4">Task Name</th>
+          <th scope="col" class="col-md-2">Date Created</th>
+          <th scope="col" class="col-md-2">Due Date</th>
+          <th scope="col" class="col-md-1">Priority</th>
+          <th scope="col" class="col-md-3">Actions</th>
         </tr>
       </thead>
         <tbody>
           {% for task in complete_tasks %}
             <tr>
               <td>{{ task.name }}</td>
-              <td>{{ task.created_datetime.strftime("%m/%d/%Y, %-I:%M %p") }}</td>
+              <td>{{ task.created_datetime.strftime("%m/%d/%Y at %-I:%M %p") }}</td>
               <td>{{ task.due_date.strftime("%m/%d/%Y") }}</td>
               <td>{{ task.priority }}</td>
               <td>
@@ -121,4 +128,4 @@
   </div>
 </div>
 
-{% endblock %}
+{% endblock content %}

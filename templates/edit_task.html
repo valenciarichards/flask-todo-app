@@ -1,10 +1,18 @@
 {# edit_task.html #}
 
 {%  extends "base.html" %}
+
+{% block navbar %}
+  <li><a href="{{ url_for('tasks') }}">My Tasks</a></li>
+  <li><a href="{{ url_for('logout') }}">Logout</a></li>
+{% endblock navbar %}
+
 {% block content %}
-    <h1>Edit a task</h1>
-    <br/>
-    <form action="{{ url_for("edit_task", task_id=task.id) }}" method="POST">
+
+    <h1 class="text-center">Edit Task</h1>
+    <br>
+    <div class="col-md-6 col-md-offset-3">
+        <form action="{{ url_for("edit_task", task_id=task.id) }}" method="POST">
     {# Add CSRF protection #}
     {{ form.csrf_token }}
     <div class="form-group">
@@ -23,7 +31,10 @@
     </div>
     <br>
     <div>
-        <button type="submit" class="btn btn-default">Update</button>
+        <a id="cancel" class="btn btn-default" href="{{ url_for('tasks') }}">Cancel</a> &nbsp;
+        <button id="submit" type="submit" class="btn btn-default">Update</button>
     </div>
     </form>
+    </div>
+
 {% endblock %}

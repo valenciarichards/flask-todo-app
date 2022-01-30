@@ -4,23 +4,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <!--Bootstrap-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="icon">
 
     <title>ToDo App</title>
 </head>
 <body>
+
     <div class="container">
+        <!--navbar-->
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+            <div id="navbar" class="collapse navbar-collapse">
+              <ul class="nav navbar-nav">
+                  <li><a class="navbar-brand" href="#"><strong>TO DO</strong></a></li>
+                    {# Navbar customization depending on page #}
+                  {% block navbar %}
+                  {% endblock %}
+              </ul>
+            </div><!--/.nav-collapse -->
+          </div>
+          </div>
+    </nav>
+
+        <br>
+        <br>
+        <br>
         <!-- show flashed messages -->
         {% for message in get_flashed_messages() %}
             <div class="flash">{{ message }}</div>
         {% endfor %}
+
         <!-- show errors -->
         {% if error %}
-            <div class="error"><strong>Error:</strong> {{ error }}</div>
+            <div class="has-error" style="color: red"><strong>Error:</strong> {{ error }}</div>
         {% endif %}
-        <!-- inheritance -->
+
+        <!-- content -->
         {% block content %}
         {% endblock %}
     </div>

@@ -45,11 +45,10 @@ def login_required(func):
     return wrap
 
 
-@login_required
 def verify_task_owner(task_id):
     """Return True if the logged-in user created the given task. Otherwise, show an error and return False.
     """
-    task = db.session.query(Task).filter_by(id=task_id).first()
+    task = db.session.query(Task).get_or_404(task_id)
     if task.user_id == session["user_id"]:
         return True
     else:
@@ -188,8 +187,8 @@ def add_task():
 def edit_task(task_id):
     """Edit the name, due date or priority of a task."""
     if verify_task_owner(task_id):
-        # Query database for task to update.
-        task = db.session.query(Task).filter_by(id=task_id).first()
+        # Query database for task to update. If the task does not exist, raise a 404 error.
+        task = db.session.query(Task).get_or_404(task_id)
         # Pre-populate the form with current task data.
         form = AddOrUpdateTaskForm(request.form, obj=task)
         if request.method == "POST" and form.validate():
@@ -198,6 +197,7 @@ def edit_task(task_id):
                 "due_date": form.due_date.data,
                 "priority": form.priority.data,
             }
+            # Update the Task in the database and commit changes.
             db.session.query(Task).filter_by(id=task_id).update(updated_task)
             db.session.commit()
             flash("Task successfully updated.")
