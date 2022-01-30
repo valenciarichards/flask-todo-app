@@ -6,6 +6,7 @@ from models import db, User, Task
 from functools import wraps
 from datetime import datetime
 from sqlalchemy.exc import IntegrityError
+from flask_bcrypt import Bcrypt
 
 # Flask
 app = Flask(__name__)
@@ -16,15 +17,16 @@ app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///book.sqlite'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['DEBUG'] = True
-
 db.init_app(app)
-
 
 # Create the initial database
 db.create_all()
 
+# Setup password hashing
+bcrypt = Bcrypt(app)
 
-# Helper function
+
+# Helper functions
 
 def login_required(func):
     """Restrict access to pages that require a user to be logged in."""
@@ -73,7 +75,7 @@ def login():
         if form.validate():
             user = db.session.query(User).filter_by(username=form.username.data).first()
             # If the user is in the database and the password is correct, log the user in and redirect to tasks page.
-            if user is not None and user.password == form.password.data:
+            if user is not None and bcrypt.check_password_hash(user.password, form.password.data):
                 session["logged_in"] = True
                 session["user_id"] = user.id
                 session["username"] = user.username
@@ -103,14 +105,13 @@ def signup():
     error = None
     form = SignupUserForm(request.form)
     if request.method == "POST":
-        # TODO ensure passwords aren't stored unencrypted
         # Validate form data.
         if form.validate():
             # Create the new User.
             new_user = User(
                 username=form.username.data,
                 email=form.email.data,
-                password=form.password.data,
+                password=bcrypt.generate_password_hash(form.password.data),
             )
             # Add the new User to the database and redirect to the login page.
             # Handle database errors.
