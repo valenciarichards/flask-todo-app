@@ -1,5 +1,6 @@
 book.sqlite
 venv/
-__pycahce__/
+__pycache__/
 .vscode
 .DS_Store
+.idea/
