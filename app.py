@@ -37,10 +37,22 @@ def login_required(func):
             return func(*args, **kwargs)
         # Otherwise, prompt the user to login and redirect to the login page.
         else:
-            flash("Please log in.")
+            flash("You have to be logged in to access that page.")
             return redirect(url_for("login"))
 
     return wrap
+
+
+@login_required
+def verify_task_owner(task_id):
+    """Return True if the logged-in user created the given task. Otherwise, show an error and return False.
+    """
+    task = db.session.query(Task).filter_by(id=task_id).first()
+    if task.user_id == session["user_id"]:
+        return True
+    else:
+        flash("You don't have permission to access that page.")
+        return False
 
 
 # Route handlers
@@ -54,13 +66,11 @@ def index():
 @app.route("/login/", methods=["GET", "POST"])
 def login():
     """Log the user in."""
-    # TODO fix login function
     error = None
     form = LoginUserForm(request.form)
     if request.method == "POST":
         # Validate form data.
         if form.validate():
-            # TODO change to db.session
             user = db.session.query(User).filter_by(username=form.username.data).first()
             # If the user is in the database and the password is correct, log the user in and redirect to tasks page.
             if user is not None and user.password == form.password.data:
@@ -121,7 +131,6 @@ def signup():
 @login_required
 def tasks(sort_param=None):
     """View all tasks by selected sort order and display a form to add tasks."""
-    # TODO redirect tasks/task_id to edit/task_id (look into optional routing?)
     form = AddOrUpdateTaskForm(request.form)
     # If optional sort parameter is passed, sort depending on value.
     # Sort by newest first.
@@ -172,35 +181,37 @@ def add_task():
     return render_template("tasks.html", form=form)
 
 
-@app.route("/edit/<int:task_id>", methods=["GET", "POST"])
+@app.route("/edit/<int:task_id>/", methods=["GET", "POST"])
 @login_required
 def edit_task(task_id):
     """Edit the name, due date or priority of a task."""
-    # TODO fix this
-    # Query database for task to update.
-    task = db.session.query(Task).filter_by(id=task_id, user_id=session["user_id"]).first()
-    # Pre-populate the form with current task data.
-    form = AddOrUpdateTaskForm(request.form, obj=task)
-    if request.method == "POST" and form.validate():
-        updated_task = {
-            "name": form.name.data,
-            "due_date": form.due_date.data,
-            "priority": form.priority.data,
-        }
-        db.session.query(Task).filter_by(id=task_id, user_id=session["user_id"]).update(updated_task)
-        db.session.commit()
-        flash("Task successfully updated.")
-        return redirect(url_for("tasks"))
-    return render_template("edit_task.html", form=form, task=task)
+    if verify_task_owner(task_id):
+        # Query database for task to update.
+        task = db.session.query(Task).filter_by(id=task_id).first()
+        # Pre-populate the form with current task data.
+        form = AddOrUpdateTaskForm(request.form, obj=task)
+        if request.method == "POST" and form.validate():
+            updated_task = {
+                "name": form.name.data,
+                "due_date": form.due_date.data,
+                "priority": form.priority.data,
+            }
+            db.session.query(Task).filter_by(id=task_id).update(updated_task)
+            db.session.commit()
+            flash("Task successfully updated.")
+        else:
+            return render_template("edit_task.html", form=form, task=task)
+    return redirect(url_for("tasks"))
 
 
 @app.route("/complete/<int:task_id>/")
 @login_required
 def mark_task_as_complete(task_id):
     """Mark a task as complete."""
-    db.session.query(Task).filter_by(id=task_id).update({"is_complete": True})
-    db.session.commit()
-    flash("Marked as complete. Good job!")
+    if verify_task_owner(task_id):
+        db.session.query(Task).filter_by(id=task_id).update({"is_complete": True})
+        db.session.commit()
+        flash("Marked as complete. Good job!")
     return redirect(url_for("tasks"))
 
 
@@ -208,9 +219,10 @@ def mark_task_as_complete(task_id):
 @login_required
 def delete_task(task_id):
     """Delete a task."""
-    db.session.query(Task).filter_by(id=task_id).delete()
-    db.session.commit()
-    flash("Task deleted.")
+    if verify_task_owner(task_id):
+        db.session.query(Task).filter_by(id=task_id).delete()
+        db.session.commit()
+        flash("Task deleted.")
     return redirect(url_for("tasks"))
 
 
