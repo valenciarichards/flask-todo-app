@@ -17,7 +17,7 @@ Flask web app that allows users to:
 * Flask-Bcrypt
 * Flask-WTF
 * Bootstrap
-* N.B. App requires Python versions 3.6 - 3.9 due to dependencies
+* N.B. App requires Python versions 3.6 - 3.9 on Mac/Linux and Python versions 3.6 or 3.7 on Windows due to dependencies.
 
 ## Install
 
