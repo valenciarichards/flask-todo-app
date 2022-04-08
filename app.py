@@ -123,7 +123,7 @@ def signup():
                 error = "That username and/or email address already exists. Please login."
                 return render_template("login.html", form=form, error=error)
         else:
-            error = "Account not created. Please correct errors and again."
+            error = "Account not created. Please correct errors and try again."
     return render_template("signup.html", form=form, error=error)
 
 
